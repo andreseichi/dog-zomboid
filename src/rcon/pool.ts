@@ -1,4 +1,5 @@
 import { Rcon } from "rcon-client";
+import { resolveIPv4 } from "./resolve.js";
 
 type Entry = { client: Rcon; host: string; port: number };
 
@@ -21,7 +22,8 @@ export async function getClient(
     pool.delete(guildId);
   }
 
-  const client = new Rcon({ host, port, password, timeout: CONNECT_TIMEOUT_MS });
+  const resolvedHost = await resolveIPv4(host);
+  const client = new Rcon({ host: resolvedHost, port, password, timeout: CONNECT_TIMEOUT_MS });
   client.on("end", () => {
     const e = pool.get(guildId);
     if (e && e.client === client) pool.delete(guildId);

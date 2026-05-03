@@ -1,6 +1,7 @@
 import type { FastifyInstance } from "fastify";
 import { Rcon } from "rcon-client";
 import { z } from "zod";
+import { resolveIPv4 } from "../../rcon/resolve.js";
 
 const bodySchema = z.object({
   host: z.string().min(1),
@@ -18,7 +19,8 @@ export async function rconTestRoute(app: FastifyInstance): Promise<void> {
     }
 
     const { host, port, password } = parsed.data;
-    const client = new Rcon({ host, port, password, timeout: TIMEOUT_MS });
+    const resolvedHost = await resolveIPv4(host);
+    const client = new Rcon({ host: resolvedHost, port, password, timeout: TIMEOUT_MS });
 
     try {
       await client.connect();
