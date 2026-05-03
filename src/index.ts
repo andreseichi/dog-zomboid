@@ -2,6 +2,7 @@ import { env } from "./env.js";
 import { prisma } from "./db.js";
 import { createClient } from "./discord/client.js";
 import { registerInteractionHandler } from "./discord/interaction.js";
+import { startPresenceLoop } from "./discord/presence.js";
 import { createHttpServer } from "./http/server.js";
 import { shutdownPool } from "./rcon/pool.js";
 
@@ -11,6 +12,7 @@ async function main(): Promise<void> {
 
   client.once("clientReady", (c) => {
     console.log(`✅ Discord conectado como ${c.user.tag}`);
+    startPresenceLoop(c);
   });
 
   const http = await createHttpServer();
