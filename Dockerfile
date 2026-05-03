@@ -1,5 +1,6 @@
-FROM node:20-alpine AS base
+FROM node:20-slim AS base
 WORKDIR /app
+RUN apt-get update -y && apt-get install -y openssl --no-install-recommends && rm -rf /var/lib/apt/lists/*
 RUN corepack enable
 
 FROM base AS deps
